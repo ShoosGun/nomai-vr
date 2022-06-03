@@ -57,20 +57,17 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SteamVR">
+      <HintPath>..\..\..\..\AppData\Roaming\OuterWildsModManager\OWML\Mods\Raicuparta.NomaiVR\SteamVR.dll</HintPath>
+    </Reference>
+    <Reference Include="SteamVR_Actions">
+      <HintPath>..\..\..\..\AppData\Roaming\OuterWildsModManager\OWML\Mods\Raicuparta.NomaiVR\SteamVR_Actions.dll</HintPath>
+    </Reference>
     <Reference Include="UnityExplorer.STANDALONE.Mono">
       <HintPath>$(OwmlDir)\$(ModDir)\UnityExplorer.STANDALONE.Mono.dll</HintPath>
     </Reference>
     <Reference Include="Valve.Newtonsoft.Json">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)\..\Unity\Build\OuterWildsVR_Data\Managed\Valve.Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SteamVR">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)\..\Unity\Build\OuterWildsVR_Data\Managed\SteamVR.dll</HintPath>
-    </Reference>
-    <Reference Include="SteamVR_Actions">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProjectDir)\..\Unity\Build\OuterWildsVR_Data\Managed\SteamVR_Actions.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Roaming\OuterWildsModManager\OWML\Mods\Raicuparta.NomaiVR\Valve.Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

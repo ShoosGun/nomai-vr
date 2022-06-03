@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace NomaiVR
 {
-    internal abstract class NomaiVRModule<TBehaviour, TPatch>
+    public abstract class NomaiVRModule<TBehaviour, TPatch>
         where TPatch : NomaiVRPatch, new()
         where TBehaviour : MonoBehaviour
     {
@@ -74,7 +74,7 @@ namespace NomaiVR
         }
     }
 
-    internal static class NomaiVRModule
+    public static class NomaiVRModule
     {
         public class EmptyPatch : NomaiVRPatch
         {
