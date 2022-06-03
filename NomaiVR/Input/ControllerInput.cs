@@ -8,7 +8,7 @@ using static InputConsts;
 
 namespace NomaiVR.Input
 {
-    internal class ControllerInput : NomaiVRModule<NomaiVRModule.EmptyBehaviour, ControllerInput.Patch>
+    public class ControllerInput : NomaiVRModule<NomaiVRModule.EmptyBehaviour, ControllerInput.Patch>
     {
         protected override bool IsPersistent => true;
         protected override OWScene[] Scenes => TitleScene;

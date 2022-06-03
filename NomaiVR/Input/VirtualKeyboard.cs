@@ -5,7 +5,7 @@ using Valve.VR;
 
 namespace NomaiVR.Input
 {
-    internal class VirtualKeyboard : NomaiVRModule<VirtualKeyboard.Behaviour, VirtualKeyboard.Behaviour.Patch>
+    public class VirtualKeyboard : NomaiVRModule<VirtualKeyboard.Behaviour, VirtualKeyboard.Behaviour.Patch>
     {
         protected override bool IsPersistent => false;
 
