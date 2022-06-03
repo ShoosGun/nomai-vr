@@ -7,7 +7,7 @@ using Valve.VR;
 
 namespace NomaiVR.Hands
 {
-    internal class HandsController : NomaiVRModule<HandsController.Behaviour, NomaiVRModule.EmptyPatch>
+    public class HandsController : NomaiVRModule<HandsController.Behaviour, NomaiVRModule.EmptyPatch>
     {
         protected override bool IsPersistent => false;
         protected override OWScene[] Scenes => AllScenes;
