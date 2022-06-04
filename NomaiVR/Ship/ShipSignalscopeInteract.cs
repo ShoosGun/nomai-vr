@@ -50,12 +50,12 @@ namespace NomaiVR.Ship
 
         protected override void OnPress()
         {
-           ControllerInput.SimulateInput(InputCommandType.SIGNALSCOPE, true);
+           ControllerInput.SimulateInput(InputCommandType.SIGNALSCOPE, true, forOneFrame: false);
         }
 
         protected override void OnRelease()
         {
-            ControllerInput.SimulateInput(InputCommandType.SIGNALSCOPE, false);
+            ControllerInput.SimulateInput(InputCommandType.SIGNALSCOPE, false, clearInput: true);
         }
 
         protected override bool ShouldDisable()

@@ -40,12 +40,12 @@ namespace NomaiVR.Ship
 
         protected override void OnPress()
         {
-            ControllerInput.SimulateInput(InputConsts.InputCommandType.TOOL_PRIMARY, true);
+            ControllerInput.SimulateInput(InputConsts.InputCommandType.TOOL_PRIMARY, true, forOneFrame: false);
         }
 
         protected override void OnRelease()
         {
-            ControllerInput.SimulateInput(InputConsts.InputCommandType.TOOL_PRIMARY, false);
+            ControllerInput.SimulateInput(InputConsts.InputCommandType.TOOL_PRIMARY, false, clearInput: true);
         }
 
         protected override bool ShouldDisable()

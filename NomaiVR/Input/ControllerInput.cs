@@ -13,25 +13,37 @@ namespace NomaiVR.Input
         protected override bool IsPersistent => true;
         protected override OWScene[] Scenes => TitleScene;
 
-        private static readonly Dictionary<int, bool> simulatedBoolInputs = new Dictionary<int, bool>();
+        private static readonly Dictionary<int, Vector2> simulatedInputs = new Dictionary<int, Vector2>();
         private static readonly List<InputCommandType> inputsToClear = new List<InputCommandType>();
 
-        public static void SimulateInput(InputCommandType commandType, bool value)
+        public static void SimulateInput(InputCommandType commandType)
         {
-            if (value)
+            SimulateInput(commandType, true);
+        }
+
+        public static void SimulateInput(InputCommandType commandType, bool value, bool forOneFrame = true, bool clearInput = false)
+        {
+            Vector2 valueForTrueBool = new Vector2(1f, 0f);
+            Vector2 valueForFalseBool = Vector2.zero;
+            SimulateInput(commandType, value ? valueForTrueBool : valueForFalseBool, forOneFrame, clearInput);
+        }
+        
+        public static void SimulateInput(InputCommandType commandType, Vector2 value, bool forOneFrame = true, bool clearInput = false)
+        {
+            if (clearInput)
             {
-                simulatedBoolInputs[(int)commandType] = true;
+                simulatedInputs.Remove((int)commandType);
+                return;
+            }
+            if (forOneFrame)
+            {                
+                inputsToClear.Add(commandType);
+                simulatedInputs[(int)commandType] = value;
             }
             else
             {
-                simulatedBoolInputs.Remove((int)commandType);
+                simulatedInputs[(int)commandType] = value;
             }
-        }
-        
-        public static void SimulateInput(InputCommandType commandType)
-        {
-            inputsToClear.Add(commandType);
-            simulatedBoolInputs[(int)commandType] = true;
         }
 
         public class Patch : NomaiVRPatch
@@ -65,17 +77,22 @@ namespace NomaiVR.Input
                     SteamVR_Actions.tools.Activate(VRToolSwapper.InteractingHand.isLeft ? SteamVR_Input_Sources.LeftHand : SteamVR_Input_Sources.RightHand, 1);
                 }
             }
-
-            private static bool GetSimulatedInput(InputCommandType commandType)
+            //Returns true if it has a value to be simulated, which is then returned by axisValue
+            private static bool GetSimulatedInput(InputCommandType commandType, out Vector2 axisValue)
             {
-                return simulatedBoolInputs.ContainsKey((int)commandType) && simulatedBoolInputs[(int)commandType];
+                axisValue = Vector2.zero;
+                if (!simulatedInputs.TryGetValue((int)commandType, out Vector2 value))
+                    return false;
+
+                axisValue = value;
+                return true;
             }
 
             private static void ClearSimulatedInputs()
             {
                 foreach (var inputToClear in inputsToClear)
                 {
-                    SimulateInput(inputToClear, false);
+                    simulatedInputs.Remove((int)inputToClear);
                 }
                 inputsToClear.Clear();
             }
@@ -83,10 +100,10 @@ namespace NomaiVR.Input
             private static void PatchInputCommands(AbstractCommands __instance)
             {
                 var commandType = __instance.CommandType;
-                if (GetSimulatedInput(commandType))
+                if (GetSimulatedInput(commandType, out Vector2 axisValue))
                 {
                     ClearSimulatedInputs();
-                    __instance.AxisValue = new Vector2(1f, 0f);
+                    __instance.AxisValue = axisValue;
                     return;
                 }
 
@@ -118,7 +135,7 @@ namespace NomaiVR.Input
             
             private static void PreventSimulatedHasSameBinding(ref bool __result, IInputCommands __instance, IInputCommands compare)
             {
-                if (GetSimulatedInput(__instance.CommandType) || GetSimulatedInput(compare.CommandType))
+                if (GetSimulatedInput(__instance.CommandType,out _) || GetSimulatedInput(compare.CommandType, out _))
                 {
                     __result = false;
                 }

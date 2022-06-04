@@ -82,14 +82,14 @@ namespace NomaiVR.ReusableBehaviours
         private void OnDisable()
         {
             isFingertipInside = false;
-            ControllerInput.SimulateInput(inputToSimulate, false);
+            ControllerInput.SimulateInput(inputToSimulate, false, clearInput: true);
         }
 
         private void FingertipEnter(Transform indexTip)
         {
             if(!isFingertipInside && State != ButtonState.Disabled)
             {
-                ControllerInput.SimulateInput(inputToSimulate, true);
+                ControllerInput.SimulateInput(inputToSimulate, true, forOneFrame:false);
                 var offHand = VRToolSwapper.NonInteractingHand ? VRToolSwapper.NonInteractingHand : HandsController.Behaviour.OffHandBehaviour;
                 SteamVR_Actions.default_Haptic.Execute(0, 0.2f, 300, .2f * ModConfig.ModSettings.VibrationStrength, offHand.InputSource);
                 SteamVR_Actions.default_Haptic.Execute(0.1f, 0.2f, 100, .1f * ModConfig.ModSettings.VibrationStrength, offHand.InputSource);
@@ -101,7 +101,7 @@ namespace NomaiVR.ReusableBehaviours
         {
             if (isFingertipInside && State != ButtonState.Disabled)
             {
-                ControllerInput.SimulateInput(inputToSimulate, false);
+                ControllerInput.SimulateInput(inputToSimulate, false, clearInput: true);
                 var offHand = VRToolSwapper.NonInteractingHand ? VRToolSwapper.NonInteractingHand : HandsController.Behaviour.OffHandBehaviour;
                 SteamVR_Actions.default_Haptic.Execute(0, 0.1f, 100, .05f * ModConfig.ModSettings.VibrationStrength, offHand.InputSource);
             }

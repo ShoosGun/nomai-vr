@@ -50,12 +50,12 @@ namespace NomaiVR.Ship
 
         private void OnPressInteract()
         {
-            ControllerInput.SimulateInput(inputCommandType, true);
+            ControllerInput.SimulateInput(inputCommandType, true, forOneFrame: false);
         }
 
         private void OnReleaseInteract()
         {
-            ControllerInput.SimulateInput(inputCommandType, false);
+            ControllerInput.SimulateInput(inputCommandType, false, clearInput: true);
             receiver.ResetInteraction();
         }
 

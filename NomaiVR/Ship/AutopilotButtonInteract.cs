@@ -50,12 +50,12 @@ namespace NomaiVR.Ship
         protected override void OnPress()
         {
             animator.SetTrigger(pressAnimation);
-            ControllerInput.SimulateInput(inputCommandType, true);
+            ControllerInput.SimulateInput(inputCommandType, true, forOneFrame: false);
         }
 
         protected override void OnRelease()
         {
-            ControllerInput.SimulateInput(inputCommandType, false);
+            ControllerInput.SimulateInput(inputCommandType, false, clearInput: true);
         }
 
         protected override bool ShouldDisable()
