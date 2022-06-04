@@ -16,7 +16,7 @@ namespace NomaiVR.ReusableBehaviours
 
         
         private Transform joystickStickBase;
-        public bool returnToCenterWhenReleased;
+        public bool returnToCenterWhenReleased = true;
         public Transform xAxisValueAxis;
         public Transform yAxisValueAxis;
 
@@ -24,7 +24,8 @@ namespace NomaiVR.ReusableBehaviours
         private bool isHandInside = false;
         private Transform interactingHand;
 
-        public InputCommandType inputToSimulate;
+        public InputCommandType xAxisInputToSimulate;
+        public InputCommandType yAxisInputToSimulate = InputCommandType.UNDEFINED;
 
         protected override void Initialize()
         {
@@ -53,7 +54,7 @@ namespace NomaiVR.ReusableBehaviours
         private void OnDisable()
         {
             isHandInside = false;
-            ControllerInput.SimulateInput(inputToSimulate, Vector2.zero, clearInput: true);
+            DisableSimulatedInput();
         }
 
         private void HandEnter(Transform hand)
@@ -114,13 +115,12 @@ namespace NomaiVR.ReusableBehaviours
                 else if (returnToCenterWhenReleased)
                     joystickStickBase.localRotation = Quaternion.identity;
 
-                ControllerInput.SimulateInput(inputToSimulate, GetJoystickInputValue(), true);
-
+                SimulateInput();
             }
             else if (returnToCenterWhenReleased && wasEnabled)
             {
                 joystickStickBase.localRotation = Quaternion.identity;
-                ControllerInput.SimulateInput(inputToSimulate, Vector2.zero, clearInput: true);
+                DisableSimulatedInput();
             }
             wasEnabled = isEnabled;
             return isEnabled;
@@ -135,6 +135,25 @@ namespace NomaiVR.ReusableBehaviours
         protected override bool IsJoystickFocused()
         {
             return CalculateHandDistance() < Hand.minimumPointDistance * 1.5f;
+        }
+        private void SimulateInput()
+        {
+            Vector2 joysticInputValue = GetJoystickInputValue();
+
+            if (xAxisInputToSimulate == yAxisInputToSimulate)
+                ControllerInput.SimulateInput(xAxisInputToSimulate, joysticInputValue, forOneFrame: false);
+            else
+            {
+                ControllerInput.SimulateInput(xAxisInputToSimulate, new Vector2(joysticInputValue.x, 0f), forOneFrame: false);
+                if (yAxisInputToSimulate != InputCommandType.UNDEFINED)
+                    ControllerInput.SimulateInput(yAxisInputToSimulate, new Vector2(joysticInputValue.y, 0f), forOneFrame: false);
+            }
+        }
+        private void DisableSimulatedInput() 
+        {
+            ControllerInput.SimulateInput(xAxisInputToSimulate, Vector2.zero, clearInput: true);
+            if (xAxisInputToSimulate != yAxisInputToSimulate && yAxisInputToSimulate != InputCommandType.UNDEFINED)
+                ControllerInput.SimulateInput(yAxisInputToSimulate, Vector2.zero, clearInput: true);
         }
     }
 }

@@ -129,9 +129,6 @@
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="InteractableControllers\" />
-  </ItemGroup>
   <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
     <Exec Command="del &quot;$(OwmlDir)\$(ModDir)\config.json&quot;" IgnoreExitCode="true" />
 
