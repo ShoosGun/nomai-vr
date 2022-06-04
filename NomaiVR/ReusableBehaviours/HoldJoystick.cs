@@ -16,10 +16,9 @@ namespace NomaiVR.ReusableBehaviours
 
         
         private Transform joystickStickBase;
-        [SerializeField]
-        private bool returnToCenterWhenReleased;
-        public Vector3 xAxisValueAxis;
-        public Vector3 yAxisValueAxis;
+        public bool returnToCenterWhenReleased;
+        public Transform xAxisValueAxis;
+        public Transform yAxisValueAxis;
 
         private ProximityDetector proximityDetector;
         private bool isHandInside = false;
@@ -93,8 +92,10 @@ namespace NomaiVR.ReusableBehaviours
         public Vector2 GetJoystickInputValue()
         {
             Vector3 joystickValueDirection = joystickStickBase.forward;
-            float xAxisValue = Vector3.Dot(xAxisValueAxis , joystickValueDirection);
-            float yAxisValue = Vector3.Dot(yAxisValueAxis, joystickValueDirection);
+            Vector3 xAxisValueAxisDirection = xAxisValueAxis.forward;
+            Vector3 yAxisValueAxisDirection = yAxisValueAxis.forward;
+            float xAxisValue = Vector3.Dot(xAxisValueAxisDirection, joystickValueDirection);
+            float yAxisValue = Vector3.Dot(yAxisValueAxisDirection, joystickValueDirection);
             return new Vector2(xAxisValue, yAxisValue);
         }
         private void FollowHandDirection()

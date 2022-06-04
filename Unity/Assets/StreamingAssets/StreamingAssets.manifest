@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3667236426
+CRC: 1243642206
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -17,4 +17,7 @@ AssetBundleManifest:
         Dependency_0: cockpit-buttons
     Info_4:
       Name: autopilot-button
+      Dependencies: {}
+    Info_5:
+      Name: interactablecontrollers
       Dependencies: {}
