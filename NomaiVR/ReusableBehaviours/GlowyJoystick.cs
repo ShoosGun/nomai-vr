@@ -26,7 +26,7 @@ namespace NomaiVR
 
         private void Awake()
         {
-            joystickMaterial = GetComponentInChildren<Renderer>().material;
+            joystickMaterial = GetComponent<Renderer>().material;
             collider = GetComponent<Collider>();
             Initialize();
         }

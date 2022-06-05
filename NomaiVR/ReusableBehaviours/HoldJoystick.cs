@@ -26,6 +26,7 @@ namespace NomaiVR.ReusableBehaviours
 
         public InputCommandType xAxisInputToSimulate;
         public InputCommandType yAxisInputToSimulate = InputCommandType.UNDEFINED;
+        public ControllerInput.InputOverrideType inputOverrideType = ControllerInput.InputOverrideType.NormalOverride;
 
         protected override void Initialize()
         {
@@ -46,7 +47,7 @@ namespace NomaiVR.ReusableBehaviours
             proximityDetector.MinDistance = interactRadius;
             proximityDetector.LocalOffset = interactOffset;
             proximityDetector.ExitThreshold = interactRadius * 0.04f;
-            proximityDetector.SetTrackedObjects(HandsController.Behaviour.DominantHandBehaviour.transform, HandsController.Behaviour.OffHandBehaviour.transform);
+            proximityDetector.SetTrackedObjects(HandsController.Behaviour.DominantHandBehaviour.IndexTip, HandsController.Behaviour.OffHandBehaviour.IndexTip);
             proximityDetector.OnEnter += HandEnter;
             proximityDetector.OnExit += HandExit;
         }
@@ -61,8 +62,8 @@ namespace NomaiVR.ReusableBehaviours
         {
             if (!isHandInside && State != JoystickState.Disabled)
             {
-                interactingHand = hand;
                 var offHand = VRToolSwapper.NonInteractingHand ? VRToolSwapper.NonInteractingHand : HandsController.Behaviour.OffHandBehaviour;
+                interactingHand = offHand.transform;
                 SteamVR_Actions.default_Haptic.Execute(0, 0.2f, 300, .2f * ModConfig.ModSettings.VibrationStrength, offHand.InputSource);
                 SteamVR_Actions.default_Haptic.Execute(0.1f, 0.2f, 100, .1f * ModConfig.ModSettings.VibrationStrength, offHand.InputSource);
             }
@@ -73,8 +74,8 @@ namespace NomaiVR.ReusableBehaviours
         {
             if (isHandInside && State != JoystickState.Disabled)
             {
-                interactingHand = hand;
                 var offHand = VRToolSwapper.NonInteractingHand ? VRToolSwapper.NonInteractingHand : HandsController.Behaviour.OffHandBehaviour;
+                interactingHand = offHand.transform;
                 SteamVR_Actions.default_Haptic.Execute(0, 0.1f, 100, .05f * ModConfig.ModSettings.VibrationStrength, offHand.InputSource);
             }
             isHandInside = false;
@@ -141,12 +142,12 @@ namespace NomaiVR.ReusableBehaviours
             Vector2 joysticInputValue = GetJoystickInputValue();
 
             if (xAxisInputToSimulate == yAxisInputToSimulate)
-                ControllerInput.SimulateInput(xAxisInputToSimulate, joysticInputValue, forOneFrame: false);
+                ControllerInput.SimulateInput(xAxisInputToSimulate, joysticInputValue, forOneFrame: false, inputOverrideType: inputOverrideType);
             else
             {
-                ControllerInput.SimulateInput(xAxisInputToSimulate, new Vector2(joysticInputValue.x, 0f), forOneFrame: false);
+                ControllerInput.SimulateInput(xAxisInputToSimulate, new Vector2(joysticInputValue.x, 0f), forOneFrame: false, inputOverrideType: inputOverrideType);
                 if (yAxisInputToSimulate != InputCommandType.UNDEFINED)
-                    ControllerInput.SimulateInput(yAxisInputToSimulate, new Vector2(joysticInputValue.y, 0f), forOneFrame: false);
+                    ControllerInput.SimulateInput(yAxisInputToSimulate, new Vector2(joysticInputValue.y, 0f), forOneFrame: false, inputOverrideType: inputOverrideType);
             }
         }
         private void DisableSimulatedInput() 

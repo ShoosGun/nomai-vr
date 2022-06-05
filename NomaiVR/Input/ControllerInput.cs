@@ -13,7 +13,19 @@ namespace NomaiVR.Input
         protected override bool IsPersistent => true;
         protected override OWScene[] Scenes => TitleScene;
 
-        private static readonly Dictionary<int, Vector2> simulatedInputs = new Dictionary<int, Vector2>();
+        private class SimulatedInput 
+        {
+            public Vector2 AxisValue;
+            public InputOverrideType InputOverrideType;
+        }
+        public enum InputOverrideType 
+        {
+            NormalOverride,
+            ChooseGreater,
+            CombineInputs
+        }
+
+        private static readonly Dictionary<int, SimulatedInput> simulatedInputs = new Dictionary<int, SimulatedInput>();
         private static readonly List<InputCommandType> inputsToClear = new List<InputCommandType>();
 
         public static void SimulateInput(InputCommandType commandType)
@@ -27,8 +39,33 @@ namespace NomaiVR.Input
             Vector2 valueForFalseBool = Vector2.zero;
             SimulateInput(commandType, value ? valueForTrueBool : valueForFalseBool, forOneFrame, clearInput);
         }
-        
-        public static void SimulateInput(InputCommandType commandType, Vector2 value, bool forOneFrame = true, bool clearInput = false)
+        private static void AddSimulatedInput(InputCommandType commandType,Vector2 value, InputOverrideType inputOverrideType)
+        {
+            if (simulatedInputs.TryGetValue((int)commandType, out SimulatedInput simulatedInput))
+            {
+                simulatedInput.AxisValue = ChooseInput(simulatedInput.AxisValue, value, inputOverrideType);
+            }
+            else
+            {
+                simulatedInputs[(int)commandType] = new SimulatedInput() { AxisValue = value, InputOverrideType = inputOverrideType };
+            }
+        }
+        private static Vector2 ChooseInput(Vector2 originalInput, Vector2 newInput, InputOverrideType inputOverrideType)
+        {
+            switch (inputOverrideType)
+            {
+                case InputOverrideType.NormalOverride:
+                    return newInput;
+                case InputOverrideType.CombineInputs:
+                    return Vector2.ClampMagnitude(originalInput + newInput, 1f);
+                case InputOverrideType.ChooseGreater:
+                    return (newInput.sqrMagnitude > originalInput.sqrMagnitude) ? originalInput : originalInput;
+                default:
+                    return originalInput;
+            }
+        }
+
+        public static void SimulateInput(InputCommandType commandType, Vector2 value, bool forOneFrame = true, bool clearInput = false, InputOverrideType inputOverrideType = InputOverrideType.NormalOverride)
         {
             if (clearInput)
             {
@@ -38,11 +75,11 @@ namespace NomaiVR.Input
             if (forOneFrame)
             {                
                 inputsToClear.Add(commandType);
-                simulatedInputs[(int)commandType] = value;
+                AddSimulatedInput(commandType, value, inputOverrideType);
             }
             else
             {
-                simulatedInputs[(int)commandType] = value;
+                AddSimulatedInput(commandType, value, inputOverrideType);
             }
         }
 
@@ -81,10 +118,10 @@ namespace NomaiVR.Input
             private static bool GetSimulatedInput(InputCommandType commandType, out Vector2 axisValue)
             {
                 axisValue = Vector2.zero;
-                if (!simulatedInputs.TryGetValue((int)commandType, out Vector2 value))
+                if (!simulatedInputs.TryGetValue((int)commandType, out SimulatedInput simulatedInput))
                     return false;
 
-                axisValue = value;
+                axisValue = ChooseInput(axisValue, simulatedInput.AxisValue, simulatedInput.InputOverrideType);
                 return true;
             }
 

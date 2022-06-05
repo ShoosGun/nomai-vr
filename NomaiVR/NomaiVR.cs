@@ -10,6 +10,7 @@ using NomaiVR.Loaders.Harmony;
 using NomaiVR.Player;
 using NomaiVR.Saves;
 using NomaiVR.Ship;
+using NomaiVR.InteractableControllers;
 
 namespace NomaiVR
 {
@@ -66,6 +67,8 @@ namespace NomaiVR
             new VirtualKeyboard();
             new Menus();
             new FixProbeCannonVisibility();
+
+            new ModelShipControllers();
 
             //Load UnityExplorer if enabled
 #if UNITYEXPLORER

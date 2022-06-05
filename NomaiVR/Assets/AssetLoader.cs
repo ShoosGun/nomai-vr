@@ -74,7 +74,7 @@ namespace NomaiVR.Assets
             SignalscopeHandheldButtonsPrefab = LoadAsset<GameObject>(handheldButtonsBundle, "handheldtools/signalscopebuttons.prefab");
 
             var interactableControllersBundle = LoadBundle("interactablecontrollers");
-            ModelShipControllersPrefab = LoadAsset<GameObject>(interactableControllersBundle, "controllers/sodelshipcontroller.prefab");
+            ModelShipControllersPrefab = LoadAsset<GameObject>(interactableControllersBundle, "controllers/modelshipcontroller.prefab");
 
             var splashBundle = LoadBundle("splash-screen");
             SplashSprite = LoadAsset<Sprite>(splashBundle, "splash.png");
