@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace NomaiVR.InteractableControllers
 {
-    //TODO add this to NomaiVR ApplyMod()
     public class ModelShipControllers : NomaiVRModule<ModelShipControllers.Behaviour, NomaiVRModule.EmptyPatch>
     {
         protected override bool IsPersistent => false;
@@ -28,7 +27,7 @@ namespace NomaiVR.InteractableControllers
                 interactalbeControllers.parent = modelShipControllers;
                 interactalbeControllers.position = modelShipControllers.position + modelShipControllers.forward*0.25f;
                 interactalbeControllers.localRotation = Quaternion.identity;
-                interactalbeControllers.localScale = Vector3.one;
+                //interactalbeControllers.localScale = Vector3.one;
 
                 Transform xAxisValueAxis = interactalbeControllers.Find("XZJoystick/XAxisValueAxis");
                 Transform yAxisValueAxis = interactalbeControllers.Find("XZJoystick/YAxisValueAxis");

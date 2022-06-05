@@ -20,23 +20,28 @@ namespace NomaiVR.ReusableBehaviours
                 {
                     trackedObjects[0] = value;
                     isInside[0] = false;
+                    distances[0] = float.PositiveInfinity;
                 }
                 else
                 {
                     trackedObjects = new[] { value };
                     isInside = new bool[1];
+                    distances = new float[] { float.PositiveInfinity };
                 }
             }
         }
 
+        private float[] distances;
         private bool[] isInside;
         private Transform[] trackedObjects;
+
 
         public void SetTrackedObjects(params Transform[] others)
         {
             if (others == null || others.Length <= 0) return;
             trackedObjects = others;
             isInside = new bool[others.Length];
+            distances = new float[others.Length];
         }
 
         public bool IsInside(int index = 0)
@@ -47,6 +52,10 @@ namespace NomaiVR.ReusableBehaviours
         public Transform GetTrackedObject(int index = 0)
         {
             return index >= trackedObjects.Length ? null : trackedObjects[index];
+        }
+        public float GetTrackedObjectDistance(int index = 0)
+        {
+            return index >= trackedObjects.Length ? float.PositiveInfinity : distances[index];
         }
 
         internal void Update()
@@ -60,7 +69,7 @@ namespace NomaiVR.ReusableBehaviours
 
                 var offset = transform.TransformVector(LocalOffset);
                 var distance = Vector3.Distance(transform.position + offset, other.position);
-
+                distances[i] = distance;
                 if (!isInside[i] && distance <= MinDistance)
                 {
                     OnEnter?.Invoke(other);
