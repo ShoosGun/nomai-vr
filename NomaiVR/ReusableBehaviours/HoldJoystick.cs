@@ -1,6 +1,5 @@
 ﻿using NomaiVR.Hands;
 using NomaiVR.Input;
-using NomaiVR.Tools;
 using System;
 using UnityEngine;
 using Valve.VR;
@@ -23,8 +22,8 @@ namespace NomaiVR.ReusableBehaviours
 
         private ProximityDetector proximityDetector;
 
-        private Transform interactingHandPart;
-        //private Hand interactingHand ()=> interactingHandPart.GetComponentInParent<Hand>();
+        private Hand interactingHand;
+        private HandAttachPoint handAttachPoint;
 
         public InputCommandType xAxisInputToSimulate;
         public InputCommandType yAxisInputToSimulate = InputCommandType.UNDEFINED;
@@ -49,9 +48,13 @@ namespace NomaiVR.ReusableBehaviours
             proximityDetector.MinDistance = interactRadius;
             proximityDetector.LocalOffset = interactOffset;
             proximityDetector.ExitThreshold = interactRadius * 0.04f;
-            proximityDetector.SetTrackedObjects(HandsController.Behaviour.RightHand.GetComponent<Hand>().Palm, HandsController.Behaviour.LeftHand.GetComponent<Hand>().Palm);
+            proximityDetector.SetTrackedObjects(HandsController.Behaviour.RightHand, HandsController.Behaviour.LeftHand);
             proximityDetector.OnExit += HandExit;
 
+            handAttachPoint = gameObject.AddComponent<HandAttachPoint>();
+            handAttachPoint.PositionSmoothTime = 0.02f;
+            handAttachPoint.RotationSmoothTime = 0.02f;
+            handAttachPoint.AttachOffset = Vector3.zero;
 
             SteamVR_Actions.default_Grip.AddOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.RightHand);
             SteamVR_Actions.default_Grip.AddOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.LeftHand);
@@ -71,18 +74,27 @@ namespace NomaiVR.ReusableBehaviours
             var handIndex = fromSource == SteamVR_Input_Sources.RightHand ? 0 : 1;
             var thisHand = proximityDetector.GetTrackedObject(handIndex);
             if (fromAction.GetState(fromSource) && proximityDetector.IsInside(handIndex))
-                interactingHandPart = thisHand;
-            else if (!fromAction.GetState(fromSource) && interactingHandPart == thisHand)
-                interactingHandPart = null;
+            {
+                interactingHand = thisHand.GetComponent<Hand>();
+                handAttachPoint.AttachHand(interactingHand, false);
+            }
+            else if (!fromAction.GetState(fromSource) && interactingHand == thisHand)
+            {
+                handAttachPoint.DettachHand();
+                interactingHand = null;
+            }
 
         }
 
         private void HandExit(Transform hand)
         {
-            if(interactingHandPart == null)
+            if(interactingHand == null)
                 return;
-            if (interactingHandPart.transform == hand)
-                interactingHandPart = null;
+            if (interactingHand.transform == hand)
+            {
+                handAttachPoint.DettachHand();
+                interactingHand = null;
+            }
         }
 
         private float CalculateHandDistance()
@@ -108,9 +120,9 @@ namespace NomaiVR.ReusableBehaviours
         }
         private void FollowHandDirection()
         {
-            joystickStickBase.LookAt(interactingHandPart);
+            joystickStickBase.LookAt(handAttachPoint.GetAttachedHandDriverTransform());
         }
-        private bool IsHandHolding() => interactingHandPart != null;
+        private bool IsHandHolding() => interactingHand != null;
         protected override bool IsJoystickEnabled() 
         { 
             bool isEnabled = CheckEnabled == null || CheckEnabled.Invoke();
