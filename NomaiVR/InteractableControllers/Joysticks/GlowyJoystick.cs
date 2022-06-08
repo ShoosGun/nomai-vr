@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace NomaiVR
+namespace NomaiVR.InteractableControllers.Joysticks
 {
     public abstract class GlowyJoystick : MonoBehaviour
     {

@@ -1,20 +1,21 @@
 ﻿using NomaiVR.Hands;
 using NomaiVR.Input;
+using NomaiVR.ReusableBehaviours;
 using System;
 using UnityEngine;
 using Valve.VR;
 using static InputConsts;
 
-namespace NomaiVR.ReusableBehaviours
+namespace NomaiVR.InteractableControllers.Joysticks
 {
-    public class HoldJoystick : GlowyJoystick
+    public class HoldStickJoystick : GlowyJoystick
     {
         public Func<bool> CheckEnabled { get; set; }
 
         private float interactRadius = 0.1f;
         private Vector3 interactOffset = Vector3.zero;
 
-        
+
         private Transform joystickStickBase;
         public bool returnToCenterWhenReleased = true;
         public Transform xAxisValueAxis;
@@ -88,7 +89,7 @@ namespace NomaiVR.ReusableBehaviours
 
         private void HandExit(Transform hand)
         {
-            if(interactingHand == null)
+            if (interactingHand == null)
                 return;
             if (interactingHand.transform == hand)
             {
@@ -123,8 +124,8 @@ namespace NomaiVR.ReusableBehaviours
             joystickStickBase.LookAt(handAttachPoint.GetAttachedHandDriverTransform());
         }
         private bool IsHandHolding() => interactingHand != null;
-        protected override bool IsJoystickEnabled() 
-        { 
+        protected override bool IsJoystickEnabled()
+        {
             bool isEnabled = CheckEnabled == null || CheckEnabled.Invoke();
             if (returnToCenterWhenReleased && !isEnabled)
             {
@@ -162,7 +163,7 @@ namespace NomaiVR.ReusableBehaviours
                     ControllerInput.SimulateInput(yAxisInputToSimulate, new Vector2(joysticInputValue.y, 0f), forOneFrame: false, inputOverrideType: inputOverrideType);
             }
         }
-        private void DisableSimulatedInput() 
+        private void DisableSimulatedInput()
         {
             ControllerInput.SimulateInput(xAxisInputToSimulate, Vector2.zero, clearInput: true);
             if (xAxisInputToSimulate != yAxisInputToSimulate && yAxisInputToSimulate != InputCommandType.UNDEFINED)
