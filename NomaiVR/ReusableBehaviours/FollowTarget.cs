@@ -66,14 +66,14 @@ namespace NomaiVR.ReusableBehaviours
 
         private void UpdateTransform()
         {
-            if (followType == FollowType.PositionAndRotation || followType == FollowType.OnlyPosition)
+            if (followType == FollowType.PositionAndRotation || followType == FollowType.OnlyRotation)
             {
                 var targetRotation = Target.rotation * LocalRotation;
                 transform.rotation = RotationSmoothTime > 0
                     ? MathHelper.SmoothDamp(transform.rotation, targetRotation, ref rotationVelocity, RotationSmoothTime)
                     : targetRotation;
             }
-            if (followType == FollowType.PositionAndRotation || followType == FollowType.OnlyRotation) 
+            if (followType == FollowType.PositionAndRotation || followType == FollowType.OnlyPosition) 
             {
                 var targetPosition = Target.TransformPoint(LocalPosition);
                 transform.position = PositionSmoothTime > 0

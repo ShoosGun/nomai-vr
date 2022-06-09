@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4149171835
+CRC: 1018804768
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 9a1bcd12f222355a20710398fa4ae2b0
+    Hash: c0560d339bae28d799ae0a557858e5c5
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c7c5dc534e7357b33d15743fbed05b86
+    Hash: 455dde68235999262d75635ed5df448a
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -23,9 +23,12 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
 - Class: 135
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/Controllers/ModelShipController.prefab
+- Assets/Controllers/TopHoldJoystickExample.prefab
+- Assets/Controllers/StickHoldJoystickExample.prefab
 Dependencies: []

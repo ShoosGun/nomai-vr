@@ -37,7 +37,7 @@ namespace NomaiVR.ReusableBehaviours
 			this.hand = hand;
 			handFollowTarget = hand.GetComponent<FollowTarget>();
 			handTransform = hand.transform;
-			handFollowTarget.followType = lockHandRotation ? FollowTarget.FollowType.OnlyRotation : FollowTarget.FollowType.None;
+			handFollowTarget.followType = lockHandRotation ?  FollowTarget.FollowType.None : FollowTarget.FollowType.OnlyRotation;
 			handDriverTransform = handFollowTarget.Target.transform;
 		}
 		public void DettachHand()

@@ -50,8 +50,7 @@ namespace NomaiVR.InteractableControllers.Joysticks
             proximityDetector.LocalOffset = interactOffset;
             proximityDetector.ExitThreshold = interactRadius * 0.04f;
             proximityDetector.SetTrackedObjects(HandsController.Behaviour.RightHand, HandsController.Behaviour.LeftHand);
-            proximityDetector.OnExit += HandExit;
-
+            //proximityDetector.OnExit += HandExit;
             handAttachPoint = gameObject.AddComponent<HandAttachPoint>();
             handAttachPoint.PositionSmoothTime = 0.02f;
             handAttachPoint.RotationSmoothTime = 0.02f;
@@ -73,10 +72,13 @@ namespace NomaiVR.InteractableControllers.Joysticks
         private void OnGripUpdated(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool newState)
         {
             var handIndex = fromSource == SteamVR_Input_Sources.RightHand ? 0 : 1;
-            var thisHand = proximityDetector.GetTrackedObject(handIndex);
+            Hand thisHand = proximityDetector.GetTrackedObject(handIndex).GetComponent<Hand>();
             if (fromAction.GetState(fromSource) && proximityDetector.IsInside(handIndex))
             {
-                interactingHand = thisHand.GetComponent<Hand>();
+                if (interactingHand != null)
+                    handAttachPoint.DettachHand();
+
+                interactingHand = thisHand;
                 handAttachPoint.AttachHand(interactingHand, false);
             }
             else if (!fromAction.GetState(fromSource) && interactingHand == thisHand)
@@ -87,16 +89,16 @@ namespace NomaiVR.InteractableControllers.Joysticks
 
         }
 
-        private void HandExit(Transform hand)
-        {
-            if (interactingHand == null)
-                return;
-            if (interactingHand.transform == hand)
-            {
-                handAttachPoint.DettachHand();
-                interactingHand = null;
-            }
-        }
+        //private void HandExit(Transform hand)
+        //{
+        //    if (interactingHand == null)
+        //        return;
+        //    if (interactingHand.transform == hand)
+        //    {
+        //        handAttachPoint.DettachHand();
+        //        interactingHand = null;
+        //    }
+        //}
 
         private float CalculateHandDistance()
         {

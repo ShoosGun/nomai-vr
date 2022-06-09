@@ -19,14 +19,14 @@ namespace NomaiVR.InteractableControllers.Joysticks
         private static readonly Color hoverColor = new Color(2.12f, 1.67f, 1.33f, 0.1f);
         private static readonly Color activeColor = new Color(2.11f, 1.67f, 1.33f, 0.2f);
         private JoystickState joystickState = JoystickState.PreInit;
-        private Material joystickMaterial;
+        //private Material joystickMaterial;
         private Collider collider;
 
         public JoystickState State => joystickState;
 
         private void Awake()
         {
-            joystickMaterial = GetComponent<Renderer>().material;
+            //joystickMaterial = GetComponent<Renderer>().material;
             collider = GetComponent<Collider>();
             Initialize();
         }
@@ -61,7 +61,7 @@ namespace NomaiVR.InteractableControllers.Joysticks
 
         private void SetJoystickTopColor(Color color)
         {
-            joystickMaterial.SetColor(shaderColor, color);
+            //joystickMaterial.SetColor(shaderColor, color);
         }
 
         private void SetState(JoystickState nextState, JoystickState? previousState = null)
