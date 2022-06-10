@@ -10,13 +10,6 @@ namespace NomaiVR.ReusableBehaviours
             PreCull,
             LateUpdate,
         }
-        public enum FollowType
-        {
-            OnlyPosition,
-            OnlyRotation,
-            PositionAndRotation,
-            None
-        }
 
         public Transform Target;
         public Vector3 LocalPosition;
@@ -24,11 +17,9 @@ namespace NomaiVR.ReusableBehaviours
         public float PositionSmoothTime;
         public float RotationSmoothTime;
         public UpdateType updateType = UpdateType.LateUpdate;
-        private Quaternion rotationVelocity;
-        private Vector3 positionVelocity;
+        protected Quaternion rotationVelocity;
+        protected Vector3 positionVelocity;
         private Camera mainCamera;
-
-        public FollowType followType = FollowType.PositionAndRotation;
 
         private void Start()
         {
@@ -64,22 +55,17 @@ namespace NomaiVR.ReusableBehaviours
             Camera.onPreCull -= HandleCameraPrecull;
         }
 
-        private void UpdateTransform()
+        protected virtual void UpdateTransform()
         {
-            if (followType == FollowType.PositionAndRotation || followType == FollowType.OnlyRotation)
-            {
-                var targetRotation = Target.rotation * LocalRotation;
-                transform.rotation = RotationSmoothTime > 0
-                    ? MathHelper.SmoothDamp(transform.rotation, targetRotation, ref rotationVelocity, RotationSmoothTime)
-                    : targetRotation;
-            }
-            if (followType == FollowType.PositionAndRotation || followType == FollowType.OnlyPosition) 
-            {
-                var targetPosition = Target.TransformPoint(LocalPosition);
-                transform.position = PositionSmoothTime > 0
-                    ? MathHelper.SmoothDamp(transform.position, targetPosition, ref positionVelocity, RotationSmoothTime)
-                    : targetPosition;
-            }
+            var targetRotation = Target.rotation * LocalRotation;
+            transform.rotation = RotationSmoothTime > 0
+                ? MathHelper.SmoothDamp(transform.rotation, targetRotation, ref rotationVelocity, RotationSmoothTime)
+                : targetRotation;
+
+            var targetPosition = Target.TransformPoint(LocalPosition);
+            transform.position = PositionSmoothTime > 0
+                ? MathHelper.SmoothDamp(transform.position, targetPosition, ref positionVelocity, RotationSmoothTime)
+                : targetPosition;
         }
     }
 }

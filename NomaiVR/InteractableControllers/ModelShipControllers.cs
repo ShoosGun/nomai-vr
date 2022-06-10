@@ -56,7 +56,7 @@ namespace NomaiVR.InteractableControllers
                 Transform yAxisValueAxis = interactalbeControllers.Find("XZJoystick/YAxisValueAxis");
                 Transform stickTop = interactalbeControllers.Find("XZJoystick/StickBaseBase/StickBase/Stick");
 
-                HoldStickJoystick joystick = stickTop.gameObject.AddComponent<HoldStickJoystick>();
+                HoldTopJoystick joystick = stickTop.gameObject.AddComponent<HoldTopJoystick>();
                 joystick.xAxisInputToSimulate = InputConsts.InputCommandType.LOOK_Y;
                 joystick.yAxisInputToSimulate = InputConsts.InputCommandType.LOOK_X;
                 joystick.xAxisValueAxis = xAxisValueAxis;

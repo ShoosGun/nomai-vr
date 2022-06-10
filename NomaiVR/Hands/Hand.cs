@@ -393,7 +393,7 @@ namespace NomaiVR.Hands
         {
             var poseObject = new GameObject("SteamVrBehaviourPose");
             poseObject.transform.SetParent(transform.parent, false);
-            followPose = gameObject.AddComponent<FollowTarget>();
+            followPose = gameObject.AddComponent<HandFollowTarget>();
             followPose.Target = poseObject.transform;
             followPose.PositionSmoothTime = 0.05f;
             followPose.RotationSmoothTime = 0.05f;

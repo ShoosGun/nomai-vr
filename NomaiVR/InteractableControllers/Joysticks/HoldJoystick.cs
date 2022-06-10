@@ -8,7 +8,7 @@ using static InputConsts;
 
 namespace NomaiVR.InteractableControllers.Joysticks
 {
-    public class HoldStickJoystick : GlowyJoystick
+    public class HoldTopJoystick : GlowyJoystick
     {
         public Func<bool> CheckEnabled { get; set; }
 
@@ -22,9 +22,7 @@ namespace NomaiVR.InteractableControllers.Joysticks
         public Transform yAxisValueAxis;
 
         private ProximityDetector proximityDetector;
-
-        private Hand interactingHand;
-        private HandAttachPoint handAttachPoint;
+        private HandFollowTarget interactingHandFollowTarget;
 
         public InputCommandType xAxisInputToSimulate;
         public InputCommandType yAxisInputToSimulate = InputCommandType.UNDEFINED;
@@ -50,13 +48,7 @@ namespace NomaiVR.InteractableControllers.Joysticks
             proximityDetector.LocalOffset = interactOffset;
             proximityDetector.ExitThreshold = interactRadius * 0.04f;
             proximityDetector.SetTrackedObjects(HandsController.Behaviour.RightHand, HandsController.Behaviour.LeftHand);
-            //proximityDetector.OnExit += HandExit;
-
-            handAttachPoint = gameObject.AddComponent<HandAttachPoint>();
-            handAttachPoint.PositionSmoothTime = 0.02f;
-            handAttachPoint.RotationSmoothTime = 0.02f;
-            handAttachPoint.AttachOffset = Vector3.zero;
-
+            
             SteamVR_Actions.default_Grip.AddOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.RightHand);
             SteamVR_Actions.default_Grip.AddOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.LeftHand);
         }
@@ -73,33 +65,23 @@ namespace NomaiVR.InteractableControllers.Joysticks
         private void OnGripUpdated(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool newState)
         {
             var handIndex = fromSource == SteamVR_Input_Sources.RightHand ? 0 : 1;
-            Hand thisHand = proximityDetector.GetTrackedObject(handIndex).GetComponent<Hand>();
+            HandFollowTarget interactingHandFollowTarget = proximityDetector.GetTrackedObject(handIndex).GetComponent<HandFollowTarget>();
+            
             if (fromAction.GetState(fromSource) && proximityDetector.IsInside(handIndex))
             {
-                if (interactingHand != null)
-                    handAttachPoint.DettachHand();
+                if (interactingHandFollowTarget != null)
+                    interactingHandFollowTarget.DetachHand();
 
-                interactingHand = thisHand;
-                handAttachPoint.AttachHand(interactingHand);
+                this.interactingHandFollowTarget = interactingHandFollowTarget;
+                interactingHandFollowTarget.AttachHand(transform, false);
             }
-            else if (!fromAction.GetState(fromSource) && interactingHand == thisHand)
+            else if (!fromAction.GetState(fromSource) && this.interactingHandFollowTarget == interactingHandFollowTarget)
             {
-                handAttachPoint.DettachHand();
-                interactingHand = null;
+                interactingHandFollowTarget.DetachHand();
+                this.interactingHandFollowTarget = null;
             }
 
         }
-
-        //private void HandExit(Transform hand)
-        //{
-        //    if (interactingHand == null)
-        //        return;
-        //    if (interactingHand.transform == hand)
-        //    {
-        //        handAttachPoint.DettachHand();
-        //        interactingHand = null;
-        //    }
-        //}
 
         private float CalculateHandDistance()
         {
@@ -124,9 +106,9 @@ namespace NomaiVR.InteractableControllers.Joysticks
         }
         private void FollowHandDirection()
         {
-            joystickStickBase.rotation = handAttachPoint.GetAttachedHandDriverTransform().rotation;
+            joystickStickBase.LookAt(interactingHandFollowTarget.Target);
         }
-        private bool IsHandHolding() => interactingHand != null;
+        private bool IsHandHolding() => interactingHandFollowTarget != null;
         protected override bool IsJoystickEnabled()
         {
             bool isEnabled = CheckEnabled == null || CheckEnabled.Invoke();
