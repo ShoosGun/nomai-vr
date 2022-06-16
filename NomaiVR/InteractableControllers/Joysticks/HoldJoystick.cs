@@ -3,7 +3,6 @@ using NomaiVR.Input;
 using NomaiVR.ReusableBehaviours;
 using System;
 using UnityEngine;
-using Valve.VR;
 using static InputConsts;
 
 namespace NomaiVR.InteractableControllers.Joysticks
@@ -12,87 +11,40 @@ namespace NomaiVR.InteractableControllers.Joysticks
     {
         public Func<bool> CheckEnabled { get; set; }
 
-        private float interactRadius = 0.1f;
-        private Vector3 interactOffset = Vector3.zero;
-
-
         private Transform joystickStickBase;
         public bool returnToCenterWhenReleased = true;
         public Transform xAxisValueAxis;
         public Transform yAxisValueAxis;
 
-        private ProximityDetector proximityDetector;
-        private HandFollowTarget interactingHandFollowTarget;
+        private SingleHandHoldablePoint holdablePoint;
 
         public InputCommandType xAxisInputToSimulate;
         public InputCommandType yAxisInputToSimulate = InputCommandType.UNDEFINED;
         public ControllerInput.InputOverrideType inputOverrideType = ControllerInput.InputOverrideType.NormalOverride;
-
         protected override void Initialize()
         {
-            var localSphereCollider = GetComponent<SphereCollider>();
-            if (localSphereCollider != null)
-            {
-                interactRadius = localSphereCollider.radius;
-                interactOffset = localSphereCollider.center;
-                Destroy(localSphereCollider);
-            }
             joystickStickBase = transform.parent;
         }
 
-
-        private void Start()
+        protected void Start() 
         {
-            proximityDetector = gameObject.AddComponent<ProximityDetector>();
-            proximityDetector.MinDistance = interactRadius;
-            proximityDetector.LocalOffset = interactOffset;
-            proximityDetector.ExitThreshold = interactRadius * 0.04f;
-            proximityDetector.SetTrackedObjects(HandsController.Behaviour.RightHand, HandsController.Behaviour.LeftHand);
-            
-            SteamVR_Actions.default_Grip.AddOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.RightHand);
-            SteamVR_Actions.default_Grip.AddOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.LeftHand);
-        }
-        internal void OnDestroy()
-        {
-            SteamVR_Actions.default_Grip.RemoveOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.RightHand);
-            SteamVR_Actions.default_Grip.RemoveOnChangeListener(OnGripUpdated, SteamVR_Input_Sources.LeftHand);
+            holdablePoint = gameObject.GetComponent<SingleHandHoldablePoint>();
         }
 
         private void OnDisable()
         {
             DisableSimulatedInput();
         }
-        private void OnGripUpdated(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool newState)
-        {
-            var handIndex = fromSource == SteamVR_Input_Sources.RightHand ? 0 : 1;
-            HandFollowTarget interactingHandFollowTarget = proximityDetector.GetTrackedObject(handIndex).GetComponent<HandFollowTarget>();
-            
-            if (fromAction.GetState(fromSource) && proximityDetector.IsInside(handIndex))
-            {
-                if (interactingHandFollowTarget != null)
-                    interactingHandFollowTarget.DetachHand();
-
-                this.interactingHandFollowTarget = interactingHandFollowTarget;
-                interactingHandFollowTarget.AttachHand(transform, false);
-            }
-            else if (!fromAction.GetState(fromSource) && this.interactingHandFollowTarget == interactingHandFollowTarget)
-            {
-                interactingHandFollowTarget.DetachHand();
-                this.interactingHandFollowTarget = null;
-            }
-
-        }
-
         private float CalculateHandDistance()
         {
-            float distanceFromRightHand = proximityDetector.GetTrackedObjectDistance(0);
-            float distanceFromLeftHand = proximityDetector.GetTrackedObjectDistance(1);
+            float distanceFromRightHand = holdablePoint.GetTrackedHandDistance(0);
+            float distanceFromLeftHand = holdablePoint.GetTrackedHandDistance(1);
             if (distanceFromLeftHand < distanceFromRightHand)
             {
-                HandsController.Behaviour.LeftHand.GetComponent<Hand>().NotifyPointable(distanceFromLeftHand < interactRadius ? 0 : distanceFromLeftHand);
+                HandsController.Behaviour.LeftHand.GetComponent<Hand>().NotifyPointable(distanceFromLeftHand < holdablePoint.InteractRadius ? 0 : distanceFromLeftHand);
                 return distanceFromLeftHand;
             }
-            HandsController.Behaviour.RightHand.GetComponent<Hand>().NotifyPointable(distanceFromRightHand < interactRadius ? 0 : distanceFromRightHand);
+            HandsController.Behaviour.RightHand.GetComponent<Hand>().NotifyPointable(distanceFromRightHand < holdablePoint.InteractRadius ? 0 : distanceFromRightHand);
             return distanceFromRightHand;
         }
         public Vector2 GetJoystickInputValue()
@@ -106,9 +58,8 @@ namespace NomaiVR.InteractableControllers.Joysticks
         }
         private void FollowHandDirection()
         {
-            joystickStickBase.LookAt(interactingHandFollowTarget.Target);
+            joystickStickBase.LookAt(holdablePoint.GetHandTarget());
         }
-        private bool IsHandHolding() => interactingHandFollowTarget != null;
         protected override bool IsJoystickEnabled()
         {
             bool isEnabled = CheckEnabled == null || CheckEnabled.Invoke();
@@ -122,18 +73,18 @@ namespace NomaiVR.InteractableControllers.Joysticks
 
         protected override bool IsJoystickActive()
         {
-            if (IsHandHolding())
+            if (holdablePoint.IsHandHolding())
                 FollowHandDirection();
             else if (returnToCenterWhenReleased)
                 joystickStickBase.localRotation = Quaternion.identity;
             SimulateInput();
 
-            return IsHandHolding();
+            return holdablePoint.IsHandHolding();
         }
 
         protected override bool IsJoystickFocused()
         {
-            return !IsHandHolding() ? CalculateHandDistance() < Hand.minimumPointDistance * 1.5f : false;
+            return !holdablePoint.IsHandHolding() ? CalculateHandDistance() < Hand.minimumPointDistance * 1.5f : false;
         }
         private void SimulateInput()
         {

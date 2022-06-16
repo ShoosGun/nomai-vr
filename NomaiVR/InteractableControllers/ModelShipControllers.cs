@@ -1,5 +1,6 @@
 ﻿using NomaiVR.Assets;
 using NomaiVR.InteractableControllers.Joysticks;
+using NomaiVR.ReusableBehaviours;
 using UnityEngine;
 
 namespace NomaiVR.InteractableControllers
@@ -38,6 +39,8 @@ namespace NomaiVR.InteractableControllers
                 Transform yAxisValueAxis = interactalbeControllers.Find("XZJoystick/YAxisValueAxis");
                 Transform stickTop = interactalbeControllers.Find("XZJoystick/StickBaseBase/StickBase/StickTop");
 
+                stickTop.gameObject.AddComponent<SingleHandHoldablePoint>().LockHandRotation = false;
+
                 HoldTopJoystick joystick = stickTop.gameObject.AddComponent<HoldTopJoystick>();
                 joystick.xAxisInputToSimulate = InputConsts.InputCommandType.MOVE_Z;
                 joystick.yAxisInputToSimulate = InputConsts.InputCommandType.MOVE_X;
@@ -55,6 +58,8 @@ namespace NomaiVR.InteractableControllers
                 Transform xAxisValueAxis = interactalbeControllers.Find("XZJoystick/XAxisValueAxis");
                 Transform yAxisValueAxis = interactalbeControllers.Find("XZJoystick/YAxisValueAxis");
                 Transform stickTop = interactalbeControllers.Find("XZJoystick/StickBaseBase/StickBase/Stick");
+
+                stickTop.gameObject.AddComponent<SingleHandHoldablePoint>().LockHandRotation = true;
 
                 HoldTopJoystick joystick = stickTop.gameObject.AddComponent<HoldTopJoystick>();
                 joystick.xAxisInputToSimulate = InputConsts.InputCommandType.LOOK_Y;
