@@ -1,6 +1,7 @@
 ﻿using NomaiVR.Hands;
 using NomaiVR.Input;
 using NomaiVR.ReusableBehaviours;
+using NomaiVR.Helpers;
 using System;
 using UnityEngine;
 using static InputConsts;
@@ -63,8 +64,8 @@ namespace NomaiVR.InteractableControllers.Joysticks
         {
             joystickStickBase.LookAt(holdablePoint.GetHandTarget());
             joystickStickBase.localEulerAngles = new Vector3(
-            Mathf.Clamp(joystickStickBase.localEulerAngles.x, -MaxXAxisAngle, MaxXAxisAngle),
-            Mathf.Clamp(joystickStickBase.localEulerAngles.y, -MaxYAxisAngle, MaxYAxisAngle)
+            MathHelper.ModularClamp(joystickStickBase.localEulerAngles.x, -MaxXAxisAngle, MaxXAxisAngle),
+            MathHelper.ModularClamp(joystickStickBase.localEulerAngles.y, -MaxYAxisAngle, MaxYAxisAngle)
             );
         }
         protected override bool IsJoystickEnabled()

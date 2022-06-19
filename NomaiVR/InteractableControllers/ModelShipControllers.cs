@@ -67,7 +67,7 @@ namespace NomaiVR.InteractableControllers
                 joystick.yAxisInputToSimulate = inputB;
                 joystick.xAxisValueAxis = xAxisValueAxis;
                 joystick.MaxXAxisAngle = 0f;
-                joystick.MaxXAxisAngle = 20f;
+                joystick.MaxYAxisAngle = 20f;
                 joystick.yAxisValueAxis = yAxisValueAxis;
                 return interactalbeControllers;
             }

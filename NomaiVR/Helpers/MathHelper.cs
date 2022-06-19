@@ -59,5 +59,18 @@ namespace NomaiVR.Helpers
                 Mathf.Infinity,
                 Time.unscaledDeltaTime);
         }
+        //From https://forum.unity.com/threads/clamping-angle-between-two-values.853771/
+        static public float ModularClamp(
+            float val, 
+            float min, 
+            float max, 
+            float rangemin = -180f, 
+            float rangemax = 180f)
+        {
+            var modulus = Mathf.Abs(rangemax - rangemin);
+            if ((val %= modulus) < 0f) val += modulus;
+            return Mathf.Clamp(val + Mathf.Min(rangemin, rangemax), min, max);
+        }
+
     }
 }
