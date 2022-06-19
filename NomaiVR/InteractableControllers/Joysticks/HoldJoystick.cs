@@ -62,11 +62,9 @@ namespace NomaiVR.InteractableControllers.Joysticks
         }
         private void FollowHandDirection()
         {
-            joystickStickBase.LookAt(holdablePoint.GetHandTarget());
-            joystickStickBase.localEulerAngles = new Vector3(
-            MathHelper.ModularClamp(joystickStickBase.localEulerAngles.x, -MaxXAxisAngle, MaxXAxisAngle),
-            MathHelper.ModularClamp(joystickStickBase.localEulerAngles.y, -MaxYAxisAngle, MaxYAxisAngle)
-            );
+            Vector3 xAxisClampDirection = MathHelper.ClampDirectionVector(holdablePoint.GetHandTarget().forward, xAxisValueAxis.forward, MaxXAxisAngle);
+            Vector3 yAxisClampDirection = MathHelper.ClampDirectionVector(holdablePoint.GetHandTarget().forward, yAxisValueAxis.forward, MaxYAxisAngle);
+            joystickStickBase.rotation = Quaternion.LookRotation(xAxisClampDirection) * Quaternion.LookRotation(yAxisClampDirection);
         }
         protected override bool IsJoystickEnabled()
         {

@@ -59,17 +59,14 @@ namespace NomaiVR.Helpers
                 Mathf.Infinity,
                 Time.unscaledDeltaTime);
         }
-        //From https://forum.unity.com/threads/clamping-angle-between-two-values.853771/
-        static public float ModularClamp(
-            float val, 
-            float min, 
-            float max, 
-            float rangemin = -180f, 
-            float rangemax = 180f)
+        //From https://math.stackexchange.com/questions/1805810/clamp-angle-between-two-vectors
+        static public Vector3 ClampDirectionVector(
+            Vector3 currentDirectionVector,
+            Vector3 referenceDirectionVector,
+            float maxAngle)
         {
-            var modulus = Mathf.Abs(rangemax - rangemin);
-            if ((val %= modulus) < 0f) val += modulus;
-            return Mathf.Clamp(val + Mathf.Min(rangemin, rangemax), min, max);
+            Vector3 ortogonalRejection = currentDirectionVector - Vector3.Dot(referenceDirectionVector, currentDirectionVector) * referenceDirectionVector;
+            return Mathf.Cos(maxAngle)* referenceDirectionVector + Mathf.Sin(maxAngle)* ortogonalRejection.normalized;
         }
 
     }
