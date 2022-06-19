@@ -24,35 +24,36 @@ namespace NomaiVR.InteractableControllers
 
             private void SetUpModelShipControllers(Transform modelShipControllers)
             {
-                SetUpTopHoldExample(modelShipControllers);
-                SetUpStickHoldExample(modelShipControllers);
+                SetUpStickHoldExample(modelShipControllers,InputConsts.InputCommandType.MOVE_Z,InputConsts.InputCommandType.MOVE_X);
+                SetUpStickHoldExample(modelShipControllers, InputConsts.InputCommandType.LOOK_Y, InputConsts.InputCommandType.LOOK_X);
             }
 
-            private Transform SetUpTopHoldExample(Transform modelShipControllers) 
+            float previousPosition = 0.1f;
+            private Transform SetUpTopHoldExample(Transform modelShipControllers, InputConsts.InputCommandType inputA, InputConsts.InputCommandType inputB)
             {
+                previousPosition = -previousPosition;
                 interactalbeControllers = Instantiate(AssetLoader.TopHoldJoystickPrefab).transform;
                 interactalbeControllers.parent = modelShipControllers;
-                interactalbeControllers.position = modelShipControllers.position + modelShipControllers.forward * 0.25f - modelShipControllers.right * 0.1f;
+                interactalbeControllers.position = modelShipControllers.position + modelShipControllers.forward * 0.25f + modelShipControllers.right * previousPosition;
                 interactalbeControllers.localRotation = Quaternion.identity;
 
                 Transform xAxisValueAxis = interactalbeControllers.Find("XZJoystick/XAxisValueAxis");
                 Transform yAxisValueAxis = interactalbeControllers.Find("XZJoystick/YAxisValueAxis");
                 Transform stickTop = interactalbeControllers.Find("XZJoystick/StickBaseBase/StickBase/StickTop");
-
                 stickTop.gameObject.AddComponent<SingleHandHoldablePoint>().LockHandRotation = false;
-
                 HoldTopJoystick joystick = stickTop.gameObject.AddComponent<HoldTopJoystick>();
-                joystick.xAxisInputToSimulate = InputConsts.InputCommandType.MOVE_Z;
-                joystick.yAxisInputToSimulate = InputConsts.InputCommandType.MOVE_X;
+                joystick.xAxisInputToSimulate = inputA;
+                joystick.yAxisInputToSimulate = inputB;
                 joystick.xAxisValueAxis = xAxisValueAxis;
                 joystick.yAxisValueAxis = yAxisValueAxis;
                 return interactalbeControllers;
             }
-            private Transform SetUpStickHoldExample(Transform modelShipControllers)
+            private Transform SetUpStickHoldExample(Transform modelShipControllers, InputConsts.InputCommandType inputA, InputConsts.InputCommandType inputB)
             {
+                previousPosition = -previousPosition;
                 interactalbeControllers = Instantiate(AssetLoader.StickHoldJoystickPrefab).transform;
                 interactalbeControllers.parent = modelShipControllers;
-                interactalbeControllers.position = modelShipControllers.position + modelShipControllers.forward * 0.25f + modelShipControllers.right * 0.1f;
+                interactalbeControllers.position = modelShipControllers.position + modelShipControllers.forward * 0.25f + modelShipControllers.right * previousPosition;
                 interactalbeControllers.localRotation = Quaternion.identity;
 
                 Transform xAxisValueAxis = interactalbeControllers.Find("XZJoystick/XAxisValueAxis");
@@ -62,9 +63,11 @@ namespace NomaiVR.InteractableControllers
                 stickTop.gameObject.AddComponent<SingleHandHoldablePoint>().LockHandRotation = true;
 
                 HoldTopJoystick joystick = stickTop.gameObject.AddComponent<HoldTopJoystick>();
-                joystick.xAxisInputToSimulate = InputConsts.InputCommandType.LOOK_Y;
-                joystick.yAxisInputToSimulate = InputConsts.InputCommandType.LOOK_X;
+                joystick.xAxisInputToSimulate = inputA;
+                joystick.yAxisInputToSimulate = inputB;
                 joystick.xAxisValueAxis = xAxisValueAxis;
+                joystick.MaxXAxisAngle = 0f;
+                joystick.MaxXAxisAngle = 20f;
                 joystick.yAxisValueAxis = yAxisValueAxis;
                 return interactalbeControllers;
             }

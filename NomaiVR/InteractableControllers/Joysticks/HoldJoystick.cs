@@ -16,6 +16,9 @@ namespace NomaiVR.InteractableControllers.Joysticks
         public Transform xAxisValueAxis;
         public Transform yAxisValueAxis;
 
+        public float MaxXAxisAngle = 90f;
+        public float MaxYAxisAngle = 90f;
+
         private SingleHandHoldablePoint holdablePoint;
 
         public InputCommandType xAxisInputToSimulate;
@@ -59,6 +62,10 @@ namespace NomaiVR.InteractableControllers.Joysticks
         private void FollowHandDirection()
         {
             joystickStickBase.LookAt(holdablePoint.GetHandTarget());
+            joystickStickBase.localEulerAngles = new Vector3(
+            Mathf.Clamp(joystickStickBase.localEulerAngles.x, -MaxXAxisAngle, MaxXAxisAngle),
+            Mathf.Clamp(joystickStickBase.localEulerAngles.y, -MaxYAxisAngle, MaxYAxisAngle)
+            );
         }
         protected override bool IsJoystickEnabled()
         {
