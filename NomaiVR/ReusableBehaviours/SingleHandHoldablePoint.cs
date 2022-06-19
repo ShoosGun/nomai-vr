@@ -74,6 +74,9 @@ namespace NomaiVR.ReusableBehaviours
                 if (interactingHandFollowTarget != null)
                     interactingHandFollowTarget.DetachHand();
 
+                if (interactingHandFollowTarget.IsAttached)
+                    return;
+
                 interactingHandFollowTarget = interactingHandFollowTargetFromUpdate;
                 interactingHandFollowTarget.AttachHand(transform, LockHandRotation);
             }
