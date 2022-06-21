@@ -21,7 +21,7 @@ namespace NomaiVR.ReusableBehaviours
         protected Vector3 positionVelocity;
         private Camera mainCamera;
 
-        private void Start()
+        protected virtual void Start()
         {
             if (updateType == UpdateType.PreCull) SetUpPreCull();
         }

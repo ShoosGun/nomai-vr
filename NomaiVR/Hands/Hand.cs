@@ -42,7 +42,7 @@ namespace NomaiVR.Hands
         private SteamVR_Skeleton_Poser reachPoser;
         private SteamVR_Skeleton_Poser pointPoser;
         private EVRSkeletalMotionRange rangeOfMotion = EVRSkeletalMotionRange.WithoutController;
-        private FollowTarget followPose;
+        private HandFollowTarget followPose;
         private float closestPointable = float.PositiveInfinity;
         private float currentPointAmmount = 0.0f;
         private float currentPointBlendVelocity = 0.0f;
@@ -58,6 +58,7 @@ namespace NomaiVR.Hands
         {
             SetUpModel();
             SetUpVrPose();
+            SetUpHandRigidbody();
 
             Initialized?.Invoke();
 
@@ -397,13 +398,25 @@ namespace NomaiVR.Hands
             followPose.Target = poseObject.transform;
             followPose.PositionSmoothTime = 0.05f;
             followPose.RotationSmoothTime = 0.05f;
-            
+
+            followPose.ShouldFollowWithPhysics = true;
+
+
             poseObject.SetActive(false);
 
             var poseDriver = poseObject.AddComponent<SteamVR_Behaviour_Pose>();
             poseDriver.poseAction = pose;
 
             poseObject.SetActive(true);
+        }
+        private void SetUpHandRigidbody() 
+        {
+            Rigidbody rig = gameObject.AddComponent<Rigidbody>();
+            rig.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            rig.interpolation = RigidbodyInterpolation.Interpolate;
+            rig.mass = 20f;
+            rig.maxAngularVelocity = 20f;
+            rig.useGravity = false;
         }
 
         public void SetLimitRangeOfMotion(bool isShown)

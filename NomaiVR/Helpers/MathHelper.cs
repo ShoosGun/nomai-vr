@@ -59,15 +59,5 @@ namespace NomaiVR.Helpers
                 Mathf.Infinity,
                 Time.unscaledDeltaTime);
         }
-        //From https://math.stackexchange.com/questions/1805810/clamp-angle-between-two-vectors
-        static public Vector3 ClampDirectionVector(
-            Vector3 currentDirectionVector,
-            Vector3 referenceDirectionVector,
-            float maxAngle)
-        {
-            Vector3 ortogonalRejection = currentDirectionVector - Vector3.Dot(referenceDirectionVector, currentDirectionVector) * referenceDirectionVector;
-            return Mathf.Cos(maxAngle)* referenceDirectionVector + Mathf.Sin(maxAngle)* ortogonalRejection.normalized;
-        }
-
     }
 }
