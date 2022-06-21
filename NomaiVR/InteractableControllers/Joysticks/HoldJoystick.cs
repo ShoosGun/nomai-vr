@@ -63,6 +63,7 @@ namespace NomaiVR.InteractableControllers.Joysticks
         private void FollowHandDirection()
         {
             joystickStickBase.LookAt(holdablePoint.GetHandTarget());
+        }
         protected override bool IsJoystickEnabled()
         {
             bool isEnabled = CheckEnabled == null || CheckEnabled.Invoke();

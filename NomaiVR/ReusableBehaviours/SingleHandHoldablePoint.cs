@@ -30,7 +30,7 @@ namespace NomaiVR.ReusableBehaviours
             proximityDetector.LocalOffset = InteractOffset;
             proximityDetector.ExitThreshold = InteractRadius * 0.04f;
             proximityDetector.SetTrackedObjects(HandsController.Behaviour.RightHand, HandsController.Behaviour.LeftHand);
-
+            Logs.Write("AAAAAAA", debugOnly: false);
             Rigidbody rigidbody = gameObject.AddComponent<Rigidbody>();
             rigidbody.useGravity = false;
 

@@ -13,7 +13,7 @@ namespace NomaiVR.Hands
 
         public bool ShouldFollowWithPhysics;
         private Rigidbody rigidbody;
-        public float FollowSpeed = 30f;
+        public float FollowSpeed = 300f;
         public float RotationSpeed = 100f;
         private FixedJoint joint1, joint2;
 
