@@ -59,15 +59,38 @@ namespace NomaiVR.Helpers
                 Mathf.Infinity,
                 Time.unscaledDeltaTime);
         }
-        //From https://math.stackexchange.com/questions/1805810/clamp-angle-between-two-vectors
-        static public Vector3 ClampDirectionVector(
-            Vector3 currentDirectionVector,
-            Vector3 referenceDirectionVector,
-            float maxAngle)
+        //From https://en.wikipedia.org/wiki/Spherical_coordinate_system
+        static public void ToSphericalCoordinates(
+            Vector3 cartesianPoint,
+            out float radius,
+            out float phiAngle,
+            out float thetaAngle)
         {
-            Vector3 ortogonalRejection = currentDirectionVector - Vector3.Dot(referenceDirectionVector, currentDirectionVector) * referenceDirectionVector;
-            return Mathf.Cos(maxAngle)* referenceDirectionVector + Mathf.Sin(maxAngle)* ortogonalRejection.normalized;
+            radius = cartesianPoint.sqrMagnitude;
+            phiAngle = Mathf.Acos(cartesianPoint.z / radius);
+            if (cartesianPoint.x > 0)
+                thetaAngle = Mathf.Atan(cartesianPoint.x / cartesianPoint.y);
+            else if (cartesianPoint.x < 0 && cartesianPoint.y >= 0)
+                thetaAngle = Mathf.Atan(cartesianPoint.x / cartesianPoint.y) + Mathf.PI;
+            else if (cartesianPoint.x < 0 && cartesianPoint.y < 0)
+                thetaAngle = Mathf.Atan(cartesianPoint.x / cartesianPoint.y) - Mathf.PI;
+            else if (cartesianPoint.x == 0 && cartesianPoint.y > 0)
+                thetaAngle = Mathf.PI;
+            else if (cartesianPoint.x == 0 && cartesianPoint.y < 0)
+                thetaAngle = -Mathf.PI;
+            else
+                thetaAngle = 0;
         }
-
+        static public Vector3  FromSphericalCoordinates(
+            float radius,
+            float phiAngle,
+            float thetaAngle
+            )
+        {
+            float x = radius*Mathf.Sin(phiAngle)* Mathf.Cos(thetaAngle);
+            float y = radius * Mathf.Sin(phiAngle) * Mathf.Sin(thetaAngle);
+            float z = radius * Mathf.Cos(phiAngle);
+            return new Vector3(x, y, z);
+        }
     }
 }
