@@ -20,6 +20,9 @@ namespace NomaiVR.InteractableControllers.Joysticks
         public float MaxXAxisAngle = 90f;
         public float MaxYAxisAngle = 90f;
 
+        private float phiAngle = 0f;
+        private float thetaAngle = 0f;
+
         private SingleHandHoldablePoint holdablePoint;
 
         public InputCommandType xAxisInputToSimulate;
@@ -56,15 +59,23 @@ namespace NomaiVR.InteractableControllers.Joysticks
             Vector3 joystickValueDirection = joystickStickBase.forward;
             Vector3 xAxisValueAxisDirection = xAxisValueAxis.forward;
             Vector3 yAxisValueAxisDirection = yAxisValueAxis.forward;
-            float xAxisValue = Vector3.Dot(xAxisValueAxisDirection, joystickValueDirection);
-            float yAxisValue = Vector3.Dot(yAxisValueAxisDirection, joystickValueDirection);
+            float xAxisValue = Mathf.Sin(phiAngle) * Mathf.Cos(thetaAngle);
+            float yAxisValue = Mathf.Sin(phiAngle) * Mathf.Sin(thetaAngle);
             return new Vector2(xAxisValue, yAxisValue);
         }
         private void FollowHandDirection()
         {
-            Vector3 xAxisClampDirection = MathHelper.ClampDirectionVector(holdablePoint.GetHandTarget().forward, xAxisValueAxis.forward, MaxXAxisAngle);
-            Vector3 yAxisClampDirection = MathHelper.ClampDirectionVector(holdablePoint.GetHandTarget().forward, yAxisValueAxis.forward, MaxYAxisAngle);
-            joystickStickBase.rotation = Quaternion.LookRotation(xAxisClampDirection) * Quaternion.LookRotation(yAxisClampDirection);
+            Vector3 direction = holdablePoint.GetHandTarget().position - joystickStickBase.position;
+            MathHelper.ToSphericalCoordinates(direction, out float radius, out float phiAngle, out float thetaAngle);
+            AngleClampFunction(phiAngle, thetaAngle);
+
+            var clampedDirection = MathHelper.FromSphericalCoordinates(1f, this.phiAngle, this.thetaAngle);
+            joystickStickBase.rotation = Quaternion.LookRotation(clampedDirection);
+        }
+        private void AngleClampFunction(float phiAngle, float thetaAngle) 
+        {
+            this.phiAngle = phiAngle;//Mathf.Clamp(phiAngle, 0f, Mathf.Deg2Rad * 45f);
+            this.thetaAngle = thetaAngle;
         }
         protected override bool IsJoystickEnabled()
         {

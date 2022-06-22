@@ -66,14 +66,17 @@ namespace NomaiVR.Helpers
             out float phiAngle,
             out float thetaAngle)
         {
-            radius = cartesianPoint.sqrMagnitude;
-            phiAngle = Mathf.Acos(cartesianPoint.z / radius);
+            radius = cartesianPoint.magnitude;
+            phiAngle = 0f;
+            if (radius > 0f)
+                phiAngle = Mathf.Acos(cartesianPoint.z / radius);
+
             if (cartesianPoint.x > 0)
-                thetaAngle = Mathf.Atan(cartesianPoint.x / cartesianPoint.y);
+                thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y);
             else if (cartesianPoint.x < 0 && cartesianPoint.y >= 0)
-                thetaAngle = Mathf.Atan(cartesianPoint.x / cartesianPoint.y) + Mathf.PI;
+                thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y) + Mathf.PI;
             else if (cartesianPoint.x < 0 && cartesianPoint.y < 0)
-                thetaAngle = Mathf.Atan(cartesianPoint.x / cartesianPoint.y) - Mathf.PI;
+                thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y) - Mathf.PI;
             else if (cartesianPoint.x == 0 && cartesianPoint.y > 0)
                 thetaAngle = Mathf.PI;
             else if (cartesianPoint.x == 0 && cartesianPoint.y < 0)
