@@ -13,6 +13,7 @@ namespace NomaiVR.InteractableControllers.Joysticks
         public Func<bool> CheckEnabled { get; set; }
 
         private Transform joystickStickBase;
+        private Transform joystickStickBaseParent;
         public bool returnToCenterWhenReleased = true;
         public Transform xAxisValueAxis;
         public Transform yAxisValueAxis;
@@ -31,6 +32,7 @@ namespace NomaiVR.InteractableControllers.Joysticks
         protected override void Initialize()
         {
             joystickStickBase = transform.parent;
+            joystickStickBaseParent = joystickStickBase.parent;
         }
 
         protected void Start() 
@@ -65,17 +67,18 @@ namespace NomaiVR.InteractableControllers.Joysticks
         }
         private void FollowHandDirection()
         {
-            Vector3 direction = holdablePoint.GetHandTarget().position - joystickStickBase.position;
+            Vector3 direction = joystickStickBaseParent.InverseTransformPoint(holdablePoint.GetHandTarget().position);
             MathHelper.ToSphericalCoordinates(direction, out float radius, out float phiAngle, out float thetaAngle);
             AngleClampFunction(phiAngle, thetaAngle);
-
             var clampedDirection = MathHelper.FromSphericalCoordinates(1f, this.phiAngle, this.thetaAngle);
-            joystickStickBase.rotation = Quaternion.LookRotation(clampedDirection);
+            joystickStickBase.LookAt(joystickStickBaseParent.TransformPoint(clampedDirection));
         }
         private void AngleClampFunction(float phiAngle, float thetaAngle) 
         {
             this.phiAngle = phiAngle;//Mathf.Clamp(phiAngle, 0f, Mathf.Deg2Rad * 45f);
             this.thetaAngle = thetaAngle;
+            this.phiAngle = 0f;
+            this.thetaAngle = 0f;
         }
         protected override bool IsJoystickEnabled()
         {

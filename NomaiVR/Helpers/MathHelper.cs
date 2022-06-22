@@ -68,21 +68,27 @@ namespace NomaiVR.Helpers
         {
             radius = cartesianPoint.magnitude;
             phiAngle = 0f;
-            if (radius > 0f)
-                phiAngle = Mathf.Acos(cartesianPoint.z / radius);
+            thetaAngle = 0f;
+            if (radius <= 0f)
+                return;
 
-            if (cartesianPoint.x > 0)
-                thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y);
-            else if (cartesianPoint.x < 0 && cartesianPoint.y >= 0)
-                thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y) + Mathf.PI;
-            else if (cartesianPoint.x < 0 && cartesianPoint.y < 0)
-                thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y) - Mathf.PI;
-            else if (cartesianPoint.x == 0 && cartesianPoint.y > 0)
-                thetaAngle = Mathf.PI;
-            else if (cartesianPoint.x == 0 && cartesianPoint.y < 0)
-                thetaAngle = -Mathf.PI;
-            else
-                thetaAngle = 0;
+            phiAngle = Mathf.Acos(cartesianPoint.z / radius);
+
+            thetaAngle = Mathf.Atan2(cartesianPoint.x, cartesianPoint.y);
+            if (cartesianPoint.x < 0)
+                thetaAngle += Mathf.PI;
+            //if (cartesianPoint.x > 0)
+            //    thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y);
+            //else if (cartesianPoint.x < 0 && cartesianPoint.y >= 0)
+            //    thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y) + Mathf.PI;
+            //else if (cartesianPoint.x < 0 && cartesianPoint.y < 0)
+            //    thetaAngle = Mathf.Atan2(cartesianPoint.x , cartesianPoint.y) - Mathf.PI;
+            //else if (cartesianPoint.x == 0 && cartesianPoint.y > 0)
+            //    thetaAngle = Mathf.PI;
+            //else if (cartesianPoint.x == 0 && cartesianPoint.y < 0)
+            //    thetaAngle = -Mathf.PI;
+            //else
+            //    thetaAngle = 0;
         }
         static public Vector3  FromSphericalCoordinates(
             float radius,
@@ -90,8 +96,9 @@ namespace NomaiVR.Helpers
             float thetaAngle
             )
         {
-            float x = radius*Mathf.Sin(phiAngle)* Mathf.Cos(thetaAngle);
-            float y = radius * Mathf.Sin(phiAngle) * Mathf.Sin(thetaAngle);
+            float xyRadius = radius * Mathf.Sin(phiAngle);
+            float x = xyRadius * Mathf.Cos(thetaAngle);
+            float y = xyRadius * Mathf.Sin(thetaAngle);
             float z = radius * Mathf.Cos(phiAngle);
             return new Vector3(x, y, z);
         }
